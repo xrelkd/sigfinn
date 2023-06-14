@@ -1,0 +1,56 @@
+[package]
+name        = "sigfinn"
+version     = "0.1.0"
+edition     = "2021"
+authors     = ["xrelkd <46590321+xrelkd@users.noreply.github.com>"]
+homepage    = "https://github.com/xrelkd/sigfinn"
+repository  = "https://github.com/xrelkd/sigfinn"
+readme      = "README.md"
+license     = "MIT"
+description = "Lifecycle manager for spawning tasks"
+categories  = ["asynchronous"]
+keywords    = ["async", "futures"]
+
+[dependencies]
+tracing = "0.1"
+
+futures = "0.3"
+tokio   = { version = "1", features = ["rt", "signal", "sync"] }
+
+snafu = { version = "0.7", default-features = false, features = [
+  "std",
+  "futures",
+] }
+
+[dev-dependencies]
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+tokio = { version = "1", features = [
+  "macros",
+  "rt-multi-thread",
+  "signal",
+  "sync",
+  "time",
+] }
+
+axum = "0.6"
+
+[[example]]
+name = "axum"
+path = "examples/axum.rs"
+
+[[example]]
+name = "basic"
+path = "examples/basic.rs"
+
+[[example]]
+name = "basic-nested"
+path = "examples/basic_nested.rs"
+
+[[example]]
+name = "failure"
+path = "examples/failure.rs"
+
+[[example]]
+name = "tcp-server"
+path = "examples/tcp_server.rs"
