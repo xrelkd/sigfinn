@@ -49,9 +49,7 @@ in
     rustc --version
     cargo test ${UNIT_TEST_ARGUMENTS} --no-fail-fast "$@" -- \
       --nocapture \
-      --test \
-      -Z unstable-options \
-      --report-time
+      --test
   '';
 
   cargo-nextest-all = writeShellScriptBin "cargo-nextest-all" ''
@@ -63,26 +61,5 @@ in
     rustc --version
     cargo nextest --version
     cargo nextest run --workspace --no-fail-fast --no-capture "$@"
-  '';
-
-  cargo-udeps-all = writeShellScriptBin "cargo-udeps-all" ''
-    if [ $# -gt 0 ] && [ "$1" = "udeps-all" ]; then
-      shift
-    fi
-
-    cargo version
-    cargo udeps --version
-    cargo udeps ${CARGO_ARGUMENTS} "$@"
-  '';
-
-  cargo-watch-all = writeShellScriptBin "cargo-watch-all" ''
-    if [ $# -gt 0 ] && [ "$1" = "watch-all" ]; then
-      shift
-    fi
-
-    cargo --version
-    rustc --version
-    cargo clippy --version
-    cargo watch -c -- cargo "$@" ${CARGO_ARGUMENTS}
   '';
 }

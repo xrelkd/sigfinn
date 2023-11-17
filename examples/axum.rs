@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 tracing::info!("Host is available on http://{listen_address}/");
 
                 match server.serve(app.into_make_service()).with_graceful_shutdown(signal).await {
-                    Ok(_) => ExitStatus::Success,
+                    Ok(()) => ExitStatus::Success,
                     Err(err) => ExitStatus::Failure(err),
                 }
             }

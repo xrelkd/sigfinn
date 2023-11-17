@@ -11,10 +11,7 @@ impl Shutdown {
 impl Future for Shutdown {
     type Output = ();
 
-    fn poll(
-        self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
         match Pin::new(&mut self.get_mut().0).poll(cx) {
             Poll::Ready(_) => Poll::Ready(()),
             Poll::Pending => Poll::Pending,
