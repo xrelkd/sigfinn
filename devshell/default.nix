@@ -17,10 +17,7 @@ pkgs.mkShell {
     cargo-ext.cargo-doc-all
     cargo-ext.cargo-nextest-all
     cargo-ext.cargo-test-all
-    cargo-ext.cargo-udeps-all
-    cargo-ext.cargo-watch-all
     cargo-nextest
-    cargo-udeps
     cargo-watch
     rustToolchain
 
