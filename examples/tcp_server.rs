@@ -1,8 +1,4 @@
-use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-
-use futures::FutureExt;
-use sigfinn::{ExitStatus, LifecycleManager, Shutdown};
-use tokio::net::TcpListener;
+use sigfinn::{ExitStatus, LifecycleManager};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -23,8 +19,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     lifecycle_manager.spawn("TCP server", |signal| async {
         tracing::info!("TCP server is working");
-        match start_server(signal).await {
-            Ok(_) => ExitStatus::Success,
+        match internal::start_server(signal).await {
+            Ok(()) => ExitStatus::Success,
             Err(error) => ExitStatus::Failure(error),
         }
     });
@@ -40,29 +36,37 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-async fn start_server(signal: Shutdown) -> Result<(), std::io::Error> {
-    tokio::pin!(signal);
+mod internal {
+    use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
-    let listen_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 3000));
+    use futures::FutureExt;
+    use sigfinn::Shutdown;
+    use tokio::net::TcpListener;
 
-    tracing::info!("Listen on {listen_address}");
+    pub async fn start_server(signal: Shutdown) -> Result<(), std::io::Error> {
+        tokio::pin!(signal);
 
-    let server = TcpListener::bind(listen_address).await?;
+        let listen_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 3000));
 
-    loop {
-        let socket = tokio::select! {
-            s = server.accept().fuse() => s,
-            _ = signal.as_mut() => break,
-        };
+        tracing::info!("Listen on {listen_address}");
 
-        match socket {
-            Ok((stream, socket_addr)) => {
-                tracing::info!("Accepted {socket_addr}");
-                drop(stream);
+        let server = TcpListener::bind(listen_address).await?;
+
+        loop {
+            let socket = tokio::select! {
+                s = server.accept().fuse() => s,
+                _result = signal.as_mut() => break,
+            };
+
+            match socket {
+                Ok((stream, socket_addr)) => {
+                    tracing::info!("Accepted {socket_addr}");
+                    drop(stream);
+                }
+                Err(e) => tracing::error!("{e}"),
             }
-            Err(e) => tracing::error!("{e}"),
         }
-    }
 
-    Ok(())
+        Ok(())
+    }
 }

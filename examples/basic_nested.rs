@@ -25,13 +25,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             tracing::info!("future 1 is working");
             tokio::time::sleep(Duration::from_millis(500)).await;
 
-            let _ = handle.spawn("future 3", |_signal| async move {
+            let result = handle.spawn("future 3", |_signal| async move {
                 tracing::info!("future 3 is working");
                 tokio::time::sleep(Duration::from_millis(100)).await;
 
                 tracing::info!("future 3 is completed");
                 ExitStatus::Success
             });
+            drop(result);
 
             tracing::info!("future 1 is completed");
             ExitStatus::Success
