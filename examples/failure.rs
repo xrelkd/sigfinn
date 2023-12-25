@@ -48,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tokio::pin!(sleep);
         future::select(signal, sleep).await;
 
-        ExitStatus::Failure(Error::Error)
+        ExitStatus::FatalError(Error::Error)
     });
 
     tracing::info!("Press `Ctrl+C` to stop");

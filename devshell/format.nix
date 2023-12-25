@@ -18,11 +18,10 @@ pkgs.runCommandNoCC "check-format"
     --allow-missing-formatter \
     --fail-on-change \
     --no-cache \
-    --formatters \
-      prettier \
-      nix \
-      shell \
-      toml \
+    --formatters prettier \
+    --formatters nix \
+    --formatters shell \
+    --formatters toml \
     -C ${./..}
 
   # it worked!

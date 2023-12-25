@@ -1,5 +1,6 @@
 #[derive(Debug)]
 pub enum ExitStatus<Error> {
     Success,
-    Failure(Error),
+    Error(Error),
+    FatalError(Error),
 }

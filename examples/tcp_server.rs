@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tracing::info!("TCP server is working");
         match internal::start_server(signal).await {
             Ok(()) => ExitStatus::Success,
-            Err(error) => ExitStatus::Failure(error),
+            Err(error) => ExitStatus::FatalError(error),
         }
     });
 
