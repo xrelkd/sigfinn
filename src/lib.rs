@@ -139,8 +139,17 @@ where
                                 break;
                             }
                         }
-                        ExitStatus::Failure(error) => {
-                            tracing::error!("Future `{name}` failed, starting graceful shutdown");
+                        ExitStatus::Error(error) => {
+                            tracing::debug!("Future `{name}` completed with error");
+                            maybe_error = Some(error);
+                            if join_set.len() <= signals.len() {
+                                break;
+                            }
+                        }
+                        ExitStatus::FatalError(error) => {
+                            tracing::error!(
+                                "Future `{name}` occurred fatal error, starting graceful shutdown"
+                            );
                             maybe_error = Some(error);
                             break;
                         }
