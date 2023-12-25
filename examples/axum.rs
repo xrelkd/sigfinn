@@ -32,10 +32,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 match server.serve(app.into_make_service()).with_graceful_shutdown(signal).await {
                     Ok(()) => ExitStatus::Success,
-                    Err(err) => ExitStatus::Failure(err),
+                    Err(err) => ExitStatus::FatalError(err),
                 }
             }
-            Err(err) => ExitStatus::Failure(err),
+            Err(err) => ExitStatus::FatalError(err),
         }
     });
 
