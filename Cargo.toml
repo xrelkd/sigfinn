@@ -17,7 +17,7 @@ tracing = "0.1"
 futures = "0.3"
 tokio   = { version = "1", features = ["rt", "signal", "sync"] }
 
-snafu = { version = "0.7", default-features = false, features = [
+snafu = { version = "0.8", default-features = false, features = [
   "std",
   "futures",
 ] }
