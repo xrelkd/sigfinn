@@ -5,6 +5,9 @@ mod handle;
 mod shutdown;
 mod signal;
 
+#[cfg(test)]
+mod test;
+
 use std::fmt;
 
 use futures::{
