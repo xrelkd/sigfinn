@@ -45,13 +45,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             match future::select(signal, sleep).await {
                 Either::Left(_) => tracing::info!("future 2 got shutdown signal"),
                 Either::Right(_) => tracing::info!("future 2 is completed"),
-            };
+            }
 
             ExitStatus::Success
         });
 
     tracing::info!("Press `Ctrl+C` to stop");
-    lifecycle_manager.serve().await?.ok();
+    let _result = lifecycle_manager.serve().await?.ok();
 
     tracing::info!("Completed");
 

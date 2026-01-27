@@ -1,7 +1,8 @@
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
 use sigfinn::{ExitStatus, LifecycleManager};
+use tokio::net::TcpListener;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -20,17 +21,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let lifecycle_manager = LifecycleManager::new();
 
-    lifecycle_manager.spawn("Axum server", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("Axum server", |signal| async {
         tracing::info!("Axum server is working");
 
         let listen_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 3200));
 
-        match axum::Server::try_bind(&listen_address) {
-            Ok(server) => {
+        match TcpListener::bind(listen_address).await {
+            Ok(listener) => {
                 let app = Router::new().route("/", get(|| async { axum::Json("Hello, World!") }));
                 tracing::info!("Host is available on http://{listen_address}/");
 
-                match server.serve(app.into_make_service()).with_graceful_shutdown(signal).await {
+                match axum::serve(listener, app.into_make_service())
+                    .with_graceful_shutdown(signal)
+                    .await
+                {
                     Ok(()) => ExitStatus::Success,
                     Err(err) => ExitStatus::FatalError(err),
                 }

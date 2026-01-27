@@ -5,7 +5,7 @@ use tokio::sync::oneshot;
 pub struct Shutdown(oneshot::Receiver<()>);
 
 impl Shutdown {
-    pub(crate) fn new(r: oneshot::Receiver<()>) -> Self { Self(r) }
+    pub(crate) const fn new(r: oneshot::Receiver<()>) -> Self { Self(r) }
 }
 
 impl Future for Shutdown {

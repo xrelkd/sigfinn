@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let lifecycle_manager = LifecycleManager::<()>::new();
 
-    lifecycle_manager.spawn("future 1", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("future 1", |signal| async {
         tracing::info!("future 1 is working");
 
         let sleep = tokio::time::sleep(Duration::from_secs(15));
@@ -29,7 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match future::select(signal, sleep).await {
             Either::Left(_) => tracing::info!("future 1 got shutdown signal"),
             Either::Right(_) => tracing::info!("future 1 is completed"),
-        };
+        }
 
         ExitStatus::Success
     });
@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::info!("Press `Ctrl+C` to stop");
     tracing::info!("Use `$ kill -s TERM {}` to stop", std::process::id());
 
-    lifecycle_manager.serve().await?.ok();
+    let _result = lifecycle_manager.serve().await?.ok();
 
     Ok(())
 }

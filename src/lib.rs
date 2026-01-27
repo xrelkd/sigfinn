@@ -5,12 +5,14 @@ mod handle;
 mod shutdown;
 mod signal;
 
+#[cfg(test)]
+mod test;
+
 use std::fmt;
 
 use futures::{
-    future,
+    Future, future,
     future::{Either, FutureExt},
-    Future,
 };
 use snafu::ResultExt;
 use tokio::{
@@ -76,19 +78,22 @@ where
 
         let handle = self.handle();
 
-        self.spawn(format!("UNIX signal listener ({sig})"), move |internal_signal| async move {
-            tracing::debug!("Wait for signal `{sig}`");
+        let _result = self.spawn(
+            format!("UNIX signal listener ({sig})"),
+            move |internal_signal| async move {
+                tracing::debug!("Wait for signal `{sig}`");
 
-            match future::select(internal_signal, signal.recv().boxed()).await {
-                Either::Left(_) => {}
-                Either::Right(_) => {
-                    tracing::info!("`{sig}` received, starting graceful shutdown");
-                    handle.on_signal(sig);
+                match future::select(internal_signal, signal.recv().boxed()).await {
+                    Either::Left(_) => {}
+                    Either::Right(_) => {
+                        tracing::info!("`{sig}` received, starting graceful shutdown");
+                        handle.on_signal(sig);
+                    }
                 }
-            }
 
-            ExitStatus::Success
-        });
+                ExitStatus::Success
+            },
+        );
 
         Ok(())
     }
@@ -110,7 +115,7 @@ where
             match event {
                 Event::NewFuture { name, shutdown_sender, future } => {
                     shutdown_senders.push((name, shutdown_sender));
-                    join_set.spawn(future);
+                    let _result = join_set.spawn(future);
                 }
                 Event::Signal(signal) => {
                     tracing::debug!("Receive signal `{signal}`");
@@ -130,7 +135,7 @@ where
                             tracing::debug!("All futures are completed");
                             break;
                         }
-                    };
+                    }
 
                     match exit_status {
                         ExitStatus::Success => {
