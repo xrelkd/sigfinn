@@ -8,9 +8,8 @@ mod signal;
 use std::fmt;
 
 use futures::{
-    future,
+    Future, future,
     future::{Either, FutureExt},
-    Future,
 };
 use snafu::ResultExt;
 use tokio::{
