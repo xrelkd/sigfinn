@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let lifecycle_manager = LifecycleManager::new();
 
-    lifecycle_manager.spawn("TCP server", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("TCP server", |signal| async {
         tracing::info!("TCP server is working");
         match internal::start_server(signal).await {
             Ok(()) => ExitStatus::Success,

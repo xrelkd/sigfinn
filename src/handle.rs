@@ -41,17 +41,18 @@ where
             let name = name.clone();
             async move {
                 let exit_status = create_future(Shutdown::new(shutdown_rx)).await;
-                event_sender.send(Event::FutureCompleted { name, exit_status }).ok();
+                let _result = event_sender.send(Event::FutureCompleted { name, exit_status }).ok();
             }
             .boxed()
         };
-        self.event_sender.send(Event::NewFuture { name, shutdown_sender, future }).ok();
+        let _result =
+            self.event_sender.send(Event::NewFuture { name, shutdown_sender, future }).ok();
         self.clone()
     }
 
-    pub fn shutdown(&self) { self.event_sender.send(Event::Shutdown).ok(); }
+    pub fn shutdown(&self) { let _result = self.event_sender.send(Event::Shutdown).ok(); }
 
     pub(crate) fn on_signal(&self, signal: UnixSignal) {
-        self.event_sender.send(Event::Signal(signal)).ok();
+        let _result = self.event_sender.send(Event::Signal(signal)).ok();
     }
 }

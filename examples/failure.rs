@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let lifecycle_manager = LifecycleManager::new();
 
-    lifecycle_manager.spawn("future 1", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("future 1", |signal| async {
         tracing::info!("future 1 is working");
 
         let sleep = tokio::time::sleep(Duration::from_secs(15));
@@ -36,17 +36,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match future::select(signal, sleep).await {
             Either::Left(_) => tracing::info!("future 1 got shutdown signal"),
             Either::Right(_) => tracing::info!("future 1 is completed"),
-        };
+        }
 
         ExitStatus::Success
     });
 
-    lifecycle_manager.spawn("future with error", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("future with error", |signal| async {
         tracing::info!("future with error is working");
 
         let sleep = tokio::time::sleep(Duration::from_millis(1000));
         tokio::pin!(sleep);
-        future::select(signal, sleep).await;
+        let _result = future::select(signal, sleep).await;
 
         ExitStatus::FatalError(Error::Error)
     });

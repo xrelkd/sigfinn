@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let lifecycle_manager = LifecycleManager::new();
 
-    lifecycle_manager.spawn("Axum server", |signal| async {
+    let _lifecycle_manager = lifecycle_manager.spawn("Axum server", |signal| async {
         tracing::info!("Axum server is working");
 
         let listen_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 3200));
