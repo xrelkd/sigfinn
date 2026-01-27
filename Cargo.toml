@@ -1,7 +1,7 @@
 [package]
 name        = "sigfinn"
 version     = "0.2.0"
-edition     = "2021"
+edition     = "2024"
 authors     = ["xrelkd <46590321+xrelkd@users.noreply.github.com>"]
 homepage    = "https://github.com/xrelkd/sigfinn"
 repository  = "https://github.com/xrelkd/sigfinn"
