@@ -37,7 +37,7 @@ async fn test_basic_with_sigterm() -> Result<(), Box<dyn std::error::Error>> {
         std::thread::sleep(Duration::from_secs(1));
 
         // SAFETY: We want to send UNIX signal to the process itself.
-        #[allow(unsafe_code)]
+        #[expect(unsafe_code, reason = "Test helper needs to send SIGTERM via libc")]
         #[cfg(unix)]
         unsafe {
             // Send SIGTERM to terminate `pid`
