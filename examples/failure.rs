@@ -44,7 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _lifecycle_manager = lifecycle_manager.spawn("future with error", |signal| async {
         tracing::info!("future with error is working");
 
-        let sleep = tokio::time::sleep(Duration::from_millis(1000));
+        let sleep = tokio::time::sleep(Duration::from_secs(1));
         tokio::pin!(sleep);
         let _result = future::select(signal, sleep).await;
 
